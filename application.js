@@ -18,7 +18,10 @@ angular.module('todo', [])
             }, {
                 name: 'tab2',
             }];
-
+        $s.addTab = function () {
+        $s.list.push({name:$s.newTab});
+        $s.newTab = '';
+         };
     }])
     .controller('tab1', ['$scope',
         function ($s) {
