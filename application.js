@@ -23,8 +23,12 @@ angular.module('todo', [])
                 name: 'buy milk',
                 complete: true
             }];
-
-    }])
+        $s.addTodo = function () {
+        $s.list.push({name:$s.newItem,complete:false});
+        $s.newItem = '';
+         };
+    }
+    ])
     .controller('tab2', ['$scope',
         function ($s) {
         $s.list = [{
