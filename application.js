@@ -42,7 +42,11 @@ angular.module('todo', [])
             $s.list = [];
         };
         $s.clearComplete = function () {
-
+            var oldTodos = $s.list;
+            $s.list = [];
+            angular.forEach(oldTodos, function(todo) {
+            if (!todo.complete) $s.list.push(todo);
+            });
         };
     }
     ])
