@@ -35,6 +35,15 @@ angular.module('todo', [])
                 item.complete = false;
             }
         };
+        $s.moveItem = function () {
+
+        };
+        $s.clearItem = function () {
+            $s.list = [];
+        };
+        $s.clearComplete = function () {
+
+        };
     }
     ])
     .controller('tab2', ['$scope',
