@@ -27,6 +27,14 @@ angular.module('todo', [])
         $s.list.push({name:$s.newItem,complete:false});
         $s.newItem = '';
          };
+        $s.DoComplete = function (item){
+            if(item.complete == false){
+                item.complete = true;
+            }
+            else{
+                item.complete = false;
+            }
+        };
     }
     ])
     .controller('tab2', ['$scope',
