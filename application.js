@@ -13,6 +13,12 @@ angular.module('todo', [])
                     return (uiCurrent === c);
                 }
             };
+            $s.list = [{
+                name: 'tab1',
+            }, {
+                name: 'tab2',
+            }];
+
     }])
     .controller('tab1', ['$scope',
         function ($s) {

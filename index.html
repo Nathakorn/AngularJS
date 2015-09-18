@@ -11,9 +11,13 @@
 <body>
   
 <div ng-app="todo" ng-controller="page"> 
- <a href="" ng-click="ui.current(1);">Tab 1</a>
- <a href="" ng-click="ui.current(2);">Tab 2</a>
+ <ul ng-repeat="item in list">
+    <a href="" ng-click="ui.current($index + 1);">{{item.name}}</a>
+ </ul>
 
+ <div>
+  <p>Add new tab<input type="text" ng-model = "newItem"/></p>
+ </div>   
     <hr/>
     <div ng-controller="tab1" ng-show="ui.isCurrent(1);">Tab 1
         <p> What do you want to do?<input type="text" ng-model = "newItem"></input></p>
