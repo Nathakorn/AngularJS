@@ -23,21 +23,16 @@ angular.module('todo', [])
         $s.newTab = '';
          };
     }])
-    .controller('tab1', ['$scope',
-        function ($s) {
-            $s.list = [{
-                name: 'buy eggs',
-                complete: false
-            }, {
-                name: 'buy milk',
-                complete: true
-            }];
+    .controller('tab1', ['$scope', 'todoApi',
+        function ($s, $factory) {
+            //$s.moveList = [];
+            $s.list = $factory.getItemTab1();
         $s.addTodo = function () {
         $s.list.push({name:$s.newItem,complete:false});
         $s.newItem = '';
          };
         $s.DoComplete = function (item){
-            if(item.complete == false){
+            if(!item.complete){
                 item.complete = true;
             }
             else{
@@ -45,7 +40,9 @@ angular.module('todo', [])
             }
         };
         $s.moveItem = function () {
-
+            $factory.moveItemTab();
+            $s.list = [];
+            
         };
         $s.clearItem = function () {
             $s.list = [];
@@ -59,18 +56,9 @@ angular.module('todo', [])
         };
     }
     ])
-    .controller('tab2', ['$scope',
-        function ($s) {
-        $s.list = [{
-            name: 'collect underpants',
-            complete: false
-        }, {
-            name: '...',
-            complete: false
-        }, {
-            name: 'profit',
-            complete: false
-        }];
+    .controller('tab2', ['$scope', 'todoApi',
+        function ($s, $factory) {
+        $s.list = $factory.getItemTab2();
     }])
     .factory('todoApi', [function () {
     var data = [
@@ -100,6 +88,23 @@ angular.module('todo', [])
             complete: false
         }
     ];
+    var itemTab1 = [{
+                name: 'buy eggs',
+                complete: false
+            }, {
+                name: 'buy milk',
+                complete: true
+            }];
+    var itemTab2 = [{
+            name: 'collect underpants',
+            complete: false
+        }, {
+            name: '...',
+            complete: false
+        }, {
+            name: 'profit',
+            complete: false
+        }];
     return {
         query: function () {
             return data;
@@ -118,6 +123,17 @@ angular.module('todo', [])
         destroy: function(id) {
             data.splice(id, 1);
             return data;
+        },
+        getItemTab1: function(){
+            return itemTab1;
+        },
+        getItemTab2: function(){
+            return itemTab2;
+        },
+        moveItemTab: function(){
+            angular.forEach(itemTab1, function(item){
+                itemTab2.push(item);
+            });
         }
     };
 }]);
