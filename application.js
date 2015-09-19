@@ -1,6 +1,6 @@
 angular.module('todo', [])
-    .controller('page', ['$scope',
-        function ($s) {
+    .controller('page', ['$scope', 'todoApi',
+        function ($s, $factory) {
             var uiCurrent = 1;
             $s.ui = {
                 current: function (newUICurrent) {
@@ -13,11 +13,7 @@ angular.module('todo', [])
                     return (uiCurrent === c);
                 }
             };
-            $s.list = [{
-                name: 'tab1',
-            }, {
-                name: 'tab2',
-            }];
+            $s.list = $factory.getArrayTab();
         $s.addTab = function () {
         $s.list.push({name:$s.newTab});
         $s.newTab = '';
@@ -25,11 +21,10 @@ angular.module('todo', [])
     }])
     .controller('tab1', ['$scope', 'todoApi',
         function ($s, $factory) {
-            //$s.moveList = [];
-            $s.list = $factory.getItemTab1();
+        $s.list = $factory.getItemTab(1);
         $s.addTodo = function () {
-        $s.list.push({name:$s.newItem,complete:false});
-        $s.newItem = '';
+            $s.list.push({name:$s.newItem,complete:false});
+            $s.newItem = '';
          };
         $s.DoComplete = function (item){
             if(!item.complete){
@@ -58,7 +53,7 @@ angular.module('todo', [])
     ])
     .controller('tab2', ['$scope', 'todoApi',
         function ($s, $factory) {
-        $s.list = $factory.getItemTab2();
+        $s.list = $factory.getItemTab(2);
     }])
     .factory('todoApi', [function () {
     var data = [
@@ -88,6 +83,11 @@ angular.module('todo', [])
             complete: false
         }
     ];
+    var arrayTab = [{
+                name: 'tab1',
+            }, {
+                name: 'tab2',
+            }];
     var itemTab1 = [{
                 name: 'buy eggs',
                 complete: false
@@ -124,11 +124,17 @@ angular.module('todo', [])
             data.splice(id, 1);
             return data;
         },
-        getItemTab1: function(){
-            return itemTab1;
+        getArrayTab: function(){
+            return arrayTab;
         },
-        getItemTab2: function(){
-            return itemTab2;
+        getItemTab: function(tabName){
+            if(tabName == "1"){
+                return itemTab1;
+            }
+            else if(tabName == "2"){
+                return itemTab2;
+            }
+
         },
         moveItemTab: function(){
             angular.forEach(itemTab1, function(item){
