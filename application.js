@@ -26,7 +26,8 @@ angular.module('todo', [])
         function ($s, $factory) {
         $s.list = $factory.getItemTab(1);
         $s.addTodo = function () {
-            $factory.addToDo(1,{name:$s.newItem,complete:false});
+            $factory.addToDo(1,{name:$s.newItem,complete:false,move:false});
+            
             $s.newItem = '';
          };
         $s.DoComplete = function (item){
@@ -35,6 +36,14 @@ angular.module('todo', [])
             }
             else{
                 item.complete = false;
+            }
+        };
+        $s.doMove = function (item){
+            if(!item.move){
+                item.move = true;
+            }
+            else{
+                item.move = false;
             }
         };
         $s.moveItem = function () {
@@ -53,9 +62,17 @@ angular.module('todo', [])
         function ($s, $factory) {
         $s.list = $factory.getItemTab(2);
         $s.addTodo = function () {
-            $factory.addToDo(2,{name:$s.newItem,complete:false});
+            $factory.addToDo(2,{name:$s.newItem,complete:false,move: false});
             $s.newItem = '';
          };
+        $s.doMove = function (item){
+            if(!item.move){
+                item.move = true;
+            }
+            else{
+                item.move = false;
+            }
+        };
         $s.DoComplete = function (item){
             if(!item.complete){
                 item.complete = true;
@@ -138,20 +155,25 @@ angular.module('todo', [])
             }];
     var itemTab1 = [{
                 name: 'buy eggs',
-                complete: false
+                complete: false,
+                move: false
             }, {
                 name: 'buy milk',
-                complete: true
+                complete: true,
+                move: false
             }];
     var itemTab2 = [{
             name: 'collect underpants',
-            complete: false
+            complete: false,
+                move: false
         }, {
             name: '...',
-            complete: false
+            complete: false,
+                move: false
         }, {
             name: 'profit',
-            complete: false
+            complete: false,
+                move: false
         }];
     return {
         query: function () {
@@ -230,18 +252,48 @@ angular.module('todo', [])
         },
         moveItemTab: function(tabName){
           if(tabName == 1){  
+              var moveResult = [];
+              var oldTodos = [];
+                angular.forEach(itemTab1, function(todo) {
+                    oldTodos.push(todo);
+                });
+                itemTab1.length = 0;
+                angular.forEach(oldTodos, function(todo) {
+                if (!todo.move){
+                    itemTab1.push(todo);
+                }
+                else{
+                    moveResult.push(todo);
+                }
+                });
             var i;
-            for(i = 0; i < itemTab1.length; i++){
-                itemTab2.push(itemTab1[i]);
+            for(i = 0; i < moveResult.length; i++){
+                moveResult[i].move = false;
+                itemTab2.push(moveResult[i]);
             }
-            itemTab1.length = 0;
+            
           }  
           else if(tabName == 2){
+             var moveResult = [];
+              var oldTodos = [];
+                angular.forEach(itemTab2, function(todo) {
+                    oldTodos.push(todo);
+                });
+                itemTab2.length = 0;
+                angular.forEach(oldTodos, function(todo) {
+                if (!todo.move){
+                    itemTab2.push(todo);
+                }
+                else{
+                    moveResult.push(todo);
+                }
+                });
             var i;
-            for(i = 0; i < itemTab2.length; i++){
-                itemTab1.push(itemTab2[i]);
+            for(i = 0; i < moveResult.length; i++){
+                moveResult[i].move = false;
+                itemTab1.push(moveResult[i]);
             }
-            itemTab2.length = 0;
+            
           }
         }
     };

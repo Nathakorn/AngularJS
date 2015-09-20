@@ -24,9 +24,9 @@
         <button name="button" ng-click="addTodo()">Add</button>
         <ul ng-repeat="item in list">
             <li ng-class="{ 'done': item.complete }">
-              <input type="checkbox" ng-click="DoComplete(item)"/>
-              {{item.name}}
+              <input type="checkbox" ng-click="DoComplete(item)"/>{{item.name}} 
             </li>
+             <span> move<input type="checkbox" ng-click="doMove(item)"/></span>
         </ul>
         <button name="button" ng-click="clearItem()">Clear all</button>
         <button name="button" ng-click="clearComplete()">Clear complete</button>
@@ -40,6 +40,7 @@
               <input type="checkbox" ng-click="DoComplete(item)"/>
               {{item.name}}
             </li>
+            <span> move<input type="checkbox" ng-click="doMove(item)"/></span>
         </ul>
         <button name="button" ng-click="clearItem()">Clear all</button>
         <button name="button" ng-click="clearComplete()">Clear complete</button>
