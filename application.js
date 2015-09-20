@@ -1,6 +1,6 @@
 angular.module('todo', [])
-    .controller('page', ['$scope', 'todoApi',
-        function ($s, $factory) {
+    .controller('page', ['$scope', 'todoApi', 
+        function ($s, $factory, $sce) {
             var uiCurrent = 1;
             $s.ui = {
                 current: function (newUICurrent) {
@@ -17,6 +17,10 @@ angular.module('todo', [])
         $s.addTab = function () {
             $factory.addTab({name:$s.newTab});
         };
+        $s.toTrustedHTML = function( html ){
+            return $sce.trustAsHtml( html );
+        }
+
     }])
     .controller('tab1', ['$scope', 'todoApi',
         function ($s, $factory) {
@@ -46,6 +50,32 @@ angular.module('todo', [])
     }
     ])
     .controller('tab2', ['$scope', 'todoApi',
+        function ($s, $factory) {
+        $s.list = $factory.getItemTab(2);
+        $s.addTodo = function () {
+            $factory.addToDo(2,{name:$s.newItem,complete:false});
+            $s.newItem = '';
+         };
+        $s.DoComplete = function (item){
+            if(!item.complete){
+                item.complete = true;
+            }
+            else{
+                item.complete = false;
+            }
+        };
+        $s.moveItem = function () {
+            $factory.moveItemTab(2);
+            
+        };
+        $s.clearItem = function () {
+            $factory.clearAll(2);
+        };
+        $s.clearComplete = function () {
+            $factory.clearComplete(2);
+        };
+    }])
+    .controller('OtherTab', ['$scope', 'todoApi',
         function ($s, $factory) {
         $s.list = $factory.getItemTab(2);
         $s.addTodo = function () {
@@ -101,8 +131,10 @@ angular.module('todo', [])
     ];
     var arrayTab = [{
                 name: 'tab1',
+                html: ''
             }, {
                 name: 'tab2',
+                html: ''
             }];
     var itemTab1 = [{
                 name: 'buy eggs',
