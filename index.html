@@ -11,9 +11,9 @@
 <body>
   
 <div ng-app="todo" ng-controller="page"> 
- <ul ng-repeat="item in list">
+ <span ng-repeat="item in list">
     <a href="" ng-click="ui.current($index + 1);">{{item.name}}</a>
- </ul>
+ </span>
 
  <div>
   <p>Add new tab<input type="text" ng-model = "newTab"/></p>
@@ -34,9 +34,17 @@
         <button name="button" ng-click="moveItem()">Move item</button>
     </div>
     <div ng-controller="tab2" ng-show="ui.isCurrent(2);">Tab 2
+               <p> What do you want to do?<input type="text" ng-model = "newItem"></input></p>
+        <button name="button" ng-click="addTodo()">Add</button>
         <ul ng-repeat="item in list">
-            <li ng-class="{ 'done': item.complete }">{{item.name}}</li>
+            <li ng-class="{ 'done': item.complete }">
+              <input type="checkbox" ng-click="DoComplete(item)"/>
+              {{item.name}}
+            </li>
         </ul>
+        <button name="button" ng-click="clearItem()">Clear all</button>
+        <button name="button" ng-click="clearComplete()">Clear complete</button>
+        <button name="button" ng-click="moveItem()">Move item</button>
     </div>
 </div>
 

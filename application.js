@@ -15,15 +15,14 @@ angular.module('todo', [])
             };
             $s.list = $factory.getArrayTab();
         $s.addTab = function () {
-        $s.list.push({name:$s.newTab});
-        $s.newTab = '';
-         };
+            $factory.addTab({name:$s.newTab});
+        };
     }])
     .controller('tab1', ['$scope', 'todoApi',
         function ($s, $factory) {
         $s.list = $factory.getItemTab(1);
         $s.addTodo = function () {
-            $s.list.push({name:$s.newItem,complete:false});
+            $factory.addToDo(1,{name:$s.newItem,complete:false});
             $s.newItem = '';
          };
         $s.DoComplete = function (item){
@@ -35,25 +34,42 @@ angular.module('todo', [])
             }
         };
         $s.moveItem = function () {
-            $factory.moveItemTab();
-            $s.list = [];
+            $factory.moveItemTab(1);
             
         };
         $s.clearItem = function () {
-            $s.list = [];
+            $factory.clearAll(1);
         };
         $s.clearComplete = function () {
-            var oldTodos = $s.list;
-            $s.list = [];
-            angular.forEach(oldTodos, function(todo) {
-            if (!todo.complete) $s.list.push(todo);
-            });
+            $factory.clearComplete(1);
         };
     }
     ])
     .controller('tab2', ['$scope', 'todoApi',
         function ($s, $factory) {
         $s.list = $factory.getItemTab(2);
+        $s.addTodo = function () {
+            $factory.addToDo(2,{name:$s.newItem,complete:false});
+            $s.newItem = '';
+         };
+        $s.DoComplete = function (item){
+            if(!item.complete){
+                item.complete = true;
+            }
+            else{
+                item.complete = false;
+            }
+        };
+        $s.moveItem = function () {
+            $factory.moveItemTab(2);
+            
+        };
+        $s.clearItem = function () {
+            $factory.clearAll(2);
+        };
+        $s.clearComplete = function () {
+            $factory.clearComplete(2);
+        };
     }])
     .factory('todoApi', [function () {
     var data = [
@@ -127,6 +143,17 @@ angular.module('todo', [])
         getArrayTab: function(){
             return arrayTab;
         },
+        addTab: function(tabObject){
+            arrayTab.push(tabObject);
+        },
+        addToDo: function(tabName,itemObject){
+            if(tabName == "1"){
+                itemTab1.push(itemObject);
+             }   
+            else if(tabName == "2"){
+                itemTab2.push(itemObject);
+            }
+        },
         getItemTab: function(tabName){
             if(tabName == "1"){
                 return itemTab1;
@@ -134,12 +161,56 @@ angular.module('todo', [])
             else if(tabName == "2"){
                 return itemTab2;
             }
-
         },
-        moveItemTab: function(){
-            angular.forEach(itemTab1, function(item){
-                itemTab2.push(item);
-            });
+        clearAll: function(tabName){
+            if(tabName == "1"){
+                itemTab1.length = 0;
+            }
+            else if(tabName == "2"){
+                itemTab2.length = 0;
+            }
+        },
+        clearComplete: function(tabName){
+            if(tabName == 1){  
+                var oldTodos = [];
+                angular.forEach(itemTab1, function(todo) {
+                    oldTodos.push(todo);
+                });
+                itemTab1.length = 0;
+                angular.forEach(oldTodos, function(todo) {
+                if (!todo.complete){
+                    itemTab1.push(todo);
+                }
+                });
+            }  
+            else if(tabName == 2){
+                 var oldTodos = [];
+                angular.forEach(itemTab2, function(todo) {
+                    oldTodos.push(todo);
+                });
+                itemTab2.length = 0;
+                angular.forEach(oldTodos, function(todo) {
+                if (!todo.complete){
+                    itemTab2.push(todo);
+                }
+                });
+            }
+        },
+        moveItemTab: function(tabName){
+          if(tabName == 1){  
+            var i;
+            for(i = 0; i < itemTab1.length; i++){
+                itemTab2.push(itemTab1[i]);
+            }
+            itemTab1.length = 0;
+          }  
+          else if(tabName == 2){
+            var i;
+            for(i = 0; i < itemTab2.length; i++){
+                itemTab1.push(itemTab2[i]);
+            }
+            itemTab2.length = 0;
+          }
         }
     };
 }]);
