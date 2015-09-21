@@ -11,7 +11,7 @@
 <body>
   
 <div ng-app="todo" ng-controller="page"> 
- <span ng-repeat="item in list">
+ <span ng-repeat="item in tabList">
     <a href="" ng-click="ui.current($index + 1);">{{item.name}}</a>
  </span>
  <div>
@@ -19,33 +19,22 @@
   <button name="button" ng-click="addTab()">Add tab</button>
  </div>   
     <hr/>
-    <div ng-controller="tab1" ng-show="ui.isCurrent(1);">Tab 1
-        <p> What do you want to do?<input type="text" ng-model = "newItem"></input></p>
-        <button name="button" ng-click="addTodo()">Add</button>
-        <ul ng-repeat="item in list">
-            <li ng-class="{ 'done': item.complete }">
-              <input type="checkbox" ng-click="DoComplete(item)"/>{{item.name}} 
-            </li>
-             <span> move<input type="checkbox" ng-click="doMove(item)"/></span>
-        </ul>
-        <button name="button" ng-click="clearItem()">Clear all</button>
-        <button name="button" ng-click="clearComplete()">Clear complete</button>
-        <button name="button" ng-click="moveItem()">Move item</button>
+    <div ng-repeat="tab in tabList">
+      <div ng-controller="tabs" ng-show="ui.isCurrent($index + 1);" ng-init = "nameTab = tab.name;setTab(tab.name)">{{nameTab}}
+          <p> What do you want to do?<input type="text" ng-model = "newItem"></input></p>
+          <button name="button" ng-click="addTodo(tab.name)">Add</button>
+          <ul ng-repeat="item in list" ng-show = "item.inTab == tab.name">
+              <li ng-class="{ 'done': item.complete }">
+                <button name="button" ng-click="DoComplete(item)">done</button>{{item.name}} 
+              </li>
+               <span> move<input type="checkbox" ng-click="doMove(item)"/></span>
+          </ul>
+          <button name="button" ng-click="clearItem(tab.name)">Clear all</button>
+          <button name="button" ng-click="clearComplete(tab.name)">Clear complete</button>
+          <p>Move to<input type="text" ng-model = "destinationTab"/></p>
+          <button name="button" ng-click="moveItem(tab.name,destinationTab)">Move!</button>
+      </div>
     </div>
-    <div ng-controller="tab2" ng-show="ui.isCurrent(2);">Tab 2
-        <p> What do you want to do?<input type="text" ng-model = "newItem"></input></p>
-        <button name="button" ng-click="addTodo()">Add</button>
-        <ul ng-repeat="item in list">
-            <li ng-class="{ 'done': item.complete }">
-              <input type="checkbox" ng-click="DoComplete(item)"/>
-              {{item.name}}
-            </li>
-            <span> move<input type="checkbox" ng-click="doMove(item)"/></span>
-        </ul>
-        <button name="button" ng-click="clearItem()">Clear all</button>
-        <button name="button" ng-click="clearComplete()">Clear complete</button>
-        <button name="button" ng-click="moveItem()">Move item</button>
-    </div>
-</div>
+  </div>
 </body>
 </html>

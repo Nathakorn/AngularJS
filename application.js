@@ -1,6 +1,6 @@
 angular.module('todo', [])
-    .controller('page', ['$scope', 'todoApi', 
-        function ($s, $factory, $sce) {
+    .controller('page', ['$scope', 'todoApi',
+        function ($s, $factory, $sce ) {
             var uiCurrent = 1;
             $s.ui = {
                 current: function (newUICurrent) {
@@ -13,7 +13,8 @@ angular.module('todo', [])
                     return (uiCurrent === c);
                 }
             };
-            $s.list = $factory.getArrayTab();
+            $s.tabList = $factory.getArrayTab();
+            
         $s.addTab = function () {
             $factory.addTab({name:$s.newTab});
         };
@@ -22,14 +23,19 @@ angular.module('todo', [])
         }
 
     }])
-    .controller('tab1', ['$scope', 'todoApi',
-        function ($s, $factory) {
-        $s.list = $factory.getItemTab(1);
-        $s.addTodo = function () {
-            $factory.addToDo(1,{name:$s.newItem,complete:false,move:false});
-            
+    .controller('tabs', ['$scope', 'todoApi',
+        function ($s, $factory){
+        //var nameOfTab = '';
+        //console.log($s.nameTab);
+            $s.list = $factory.query();
+        
+        $s.addTodo = function (name){
+            //console.log(name);
+            $factory.addToDo({name:$s.newItem,inTab:name,complete:false,move:false});
             $s.newItem = '';
+            //$s.list = $factory.getItemTab(name); //update ui
          };
+        
         $s.DoComplete = function (item){
             if(!item.complete){
                 item.complete = true;
@@ -46,78 +52,23 @@ angular.module('todo', [])
                 item.move = false;
             }
         };
-        $s.moveItem = function () {
-            $factory.moveItemTab(1);
-            
+        $s.moveItem = function (name,destinationTab) {
+            $factory.moveItemTab(name,destinationTab);
+            //$s.list = $factory.getItemTab(name); //update ui
         };
-        $s.clearItem = function () {
-            $factory.clearAll(1);
+        $s.clearItem = function (name) {
+            //console.log(name);
+            $factory.clearAll(name);
+            //$s.list = $factory.getItemTab(name); //update ui
         };
-        $s.clearComplete = function () {
-            $factory.clearComplete(1);
+        $s.clearComplete = function (name) {
+            $factory.clearComplete(name);
+            //$s.list = $factory.getItemTab(name); //update ui
         };
     }
     ])
-    .controller('tab2', ['$scope', 'todoApi',
-        function ($s, $factory) {
-        $s.list = $factory.getItemTab(2);
-        $s.addTodo = function () {
-            $factory.addToDo(2,{name:$s.newItem,complete:false,move: false});
-            $s.newItem = '';
-         };
-        $s.doMove = function (item){
-            if(!item.move){
-                item.move = true;
-            }
-            else{
-                item.move = false;
-            }
-        };
-        $s.DoComplete = function (item){
-            if(!item.complete){
-                item.complete = true;
-            }
-            else{
-                item.complete = false;
-            }
-        };
-        $s.moveItem = function () {
-            $factory.moveItemTab(2);
-            
-        };
-        $s.clearItem = function () {
-            $factory.clearAll(2);
-        };
-        $s.clearComplete = function () {
-            $factory.clearComplete(2);
-        };
-    }])
-    .controller('OtherTab', ['$scope', 'todoApi',
-        function ($s, $factory) {
-        $s.list = $factory.getItemTab(2);
-        $s.addTodo = function () {
-            $factory.addToDo(2,{name:$s.newItem,complete:false});
-            $s.newItem = '';
-         };
-        $s.DoComplete = function (item){
-            if(!item.complete){
-                item.complete = true;
-            }
-            else{
-                item.complete = false;
-            }
-        };
-        $s.moveItem = function () {
-            $factory.moveItemTab(2);
-            
-        };
-        $s.clearItem = function () {
-            $factory.clearAll(2);
-        };
-        $s.clearComplete = function () {
-            $factory.clearComplete(2);
-        };
-    }])
+    
+    
     .factory('todoApi', [function () {
     var data = [
         {
@@ -148,36 +99,38 @@ angular.module('todo', [])
     ];
     var arrayTab = [{
                 name: 'tab1',
-                html: ''
             }, {
                 name: 'tab2',
-                html: ''
             }];
-    var itemTab1 = [{
+    var allItem = [{
                 name: 'buy eggs',
+                inTab: 'tab1',
                 complete: false,
                 move: false
             }, {
                 name: 'buy milk',
+                inTab: 'tab1',
                 complete: true,
                 move: false
-            }];
-    var itemTab2 = [{
-            name: 'collect underpants',
-            complete: false,
+            },  {
+                name: 'collect underpants',
+                inTab: 'tab2',
+                complete: false,
                 move: false
-        }, {
-            name: '...',
-            complete: false,
+            }, {
+                name: '...',
+                inTab: 'tab2',
+                complete: false,
                 move: false
-        }, {
-            name: 'profit',
-            complete: false,
+            }, {
+                name: 'profit',
+                inTab: 'tab2',
+                complete: false,
                 move: false
         }];
     return {
         query: function () {
-            return data;
+            return allItem;
         },
         get: function (id) {
             return data[id];
@@ -200,101 +153,52 @@ angular.module('todo', [])
         addTab: function(tabObject){
             arrayTab.push(tabObject);
         },
-        addToDo: function(tabName,itemObject){
-            if(tabName == "1"){
-                itemTab1.push(itemObject);
-             }   
-            else if(tabName == "2"){
-                itemTab2.push(itemObject);
-            }
+        addToDo: function(itemObject){
+            allItem.push(itemObject);
         },
         getItemTab: function(tabName){
-            if(tabName == "1"){
-                return itemTab1;
-            }
-            else if(tabName == "2"){
-                return itemTab2;
-            }
+            var itemList = [];
+            angular.forEach(allItem, function(todo) {
+                if (todo.inTab == tabName){
+                    itemList.push(todo);
+                }
+            });
+            return itemList;
         },
         clearAll: function(tabName){
-            if(tabName == "1"){
-                itemTab1.length = 0;
-            }
-            else if(tabName == "2"){
-                itemTab2.length = 0;
+           var i = 0;
+           while(i < allItem.length){
+                if(allItem[i].inTab == tabName){
+                    allItem.splice(i,1);
+                }else{
+                    i++;
+                }
             }
         },
         clearComplete: function(tabName){
-            if(tabName == 1){  
-                var oldTodos = [];
-                angular.forEach(itemTab1, function(todo) {
-                    oldTodos.push(todo);
-                });
-                itemTab1.length = 0;
-                angular.forEach(oldTodos, function(todo) {
-                if (!todo.complete){
-                    itemTab1.push(todo);
+            var i = 0;
+           while(i < allItem.length){
+                if(allItem[i].inTab == tabName && allItem[i].complete){
+                    allItem.splice(i,1);
+                }else{
+                    i++;
                 }
-                });
-            }  
-            else if(tabName == 2){
-                 var oldTodos = [];
-                angular.forEach(itemTab2, function(todo) {
-                    oldTodos.push(todo);
-                });
-                itemTab2.length = 0;
-                angular.forEach(oldTodos, function(todo) {
-                if (!todo.complete){
-                    itemTab2.push(todo);
-                }
-                });
             }
         },
-        moveItemTab: function(tabName){
-          if(tabName == 1){  
-              var moveResult = [];
-              var oldTodos = [];
-                angular.forEach(itemTab1, function(todo) {
-                    oldTodos.push(todo);
-                });
-                itemTab1.length = 0;
-                angular.forEach(oldTodos, function(todo) {
-                if (!todo.move){
-                    itemTab1.push(todo);
+        moveItemTab: function(name,destinationTab){
+           var i = 0;
+           while(i < allItem.length){
+                if(allItem[i].inTab == name && allItem[i].move){
+                    console.log(allItem[i].inTab);
+                    allItem[i].inTab = destinationTab;
+                    console.log(allItem[i].inTab);
+                    allItem[i].move = false;
+                    console.log(allItem[i]);
+                }else{
+                    i++;
                 }
-                else{
-                    moveResult.push(todo);
-                }
-                });
-            var i;
-            for(i = 0; i < moveResult.length; i++){
-                moveResult[i].move = false;
-                itemTab2.push(moveResult[i]);
             }
             
-          }  
-          else if(tabName == 2){
-             var moveResult = [];
-              var oldTodos = [];
-                angular.forEach(itemTab2, function(todo) {
-                    oldTodos.push(todo);
-                });
-                itemTab2.length = 0;
-                angular.forEach(oldTodos, function(todo) {
-                if (!todo.move){
-                    itemTab2.push(todo);
-                }
-                else{
-                    moveResult.push(todo);
-                }
-                });
-            var i;
-            for(i = 0; i < moveResult.length; i++){
-                moveResult[i].move = false;
-                itemTab1.push(moveResult[i]);
-            }
-            
-          }
         }
     };
 }]);
