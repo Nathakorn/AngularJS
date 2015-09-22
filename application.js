@@ -1,6 +1,6 @@
 angular.module('todo', [])
     .controller('page', ['$scope', 'todoApi',
-        function ($s, $factory, $sce ) {
+        function ($s, $factory) {
             var uiCurrent = 1;
             $s.ui = {
                 current: function (newUICurrent) {
@@ -18,24 +18,14 @@ angular.module('todo', [])
         $s.addTab = function () {
             $factory.addTab({name:$s.newTab});
         };
-        $s.toTrustedHTML = function( html ){
-            return $sce.trustAsHtml( html );
-        }
-
     }])
     .controller('tabs', ['$scope', 'todoApi',
         function ($s, $factory){
-        //var nameOfTab = '';
-        //console.log($s.nameTab);
             $s.list = $factory.query();
-        
         $s.addTodo = function (name){
-            //console.log(name);
             $factory.addToDo({name:$s.newItem,inTab:name,complete:false,move:false});
             $s.newItem = '';
-            //$s.list = $factory.getItemTab(name); //update ui
-         };
-        
+        };
         $s.DoComplete = function (item){
             if(!item.complete){
                 item.complete = true;
@@ -52,82 +42,50 @@ angular.module('todo', [])
                 item.move = false;
             }
         };
-        $s.moveItem = function (name,destinationTab) {
-            $factory.moveItemTab(name,destinationTab);
-            //$s.list = $factory.getItemTab(name); //update ui
+        $s.moveItem = function (currentTabName,destinationTabName) {
+            $factory.moveItemTab(currentTabName,destinationTabName);
         };
-        $s.clearItem = function (name) {
-            //console.log(name);
-            $factory.clearAll(name);
-            //$s.list = $factory.getItemTab(name); //update ui
+        $s.clearItem = function (tabName){
+            $factory.clearAll(tabName);
         };
-        $s.clearComplete = function (name) {
-            $factory.clearComplete(name);
-            //$s.list = $factory.getItemTab(name); //update ui
+        $s.clearComplete = function (tabName) {
+            $factory.clearComplete(tabName);
         };
     }
     ])
-    
-    
     .factory('todoApi', [function () {
-    var data = [
-        {
-            list: 'shopping',
-            name: 'buy eggs',
-            complete: false
-        },
-        {
-            list: 'shopping',
-            name: 'buy milk',
-            complete: true
-        },
-        {
-            list: 'business',
-            name: 'collect underpants',
-            complete: false
-        },
-        {
-            list: 'business',
-            name: '...',
-            complete: false
-        },
-        {
-            list: 'business',
-            name: 'profit',
-            complete: false
-        }
+        var arrayTab = [{
+                    name: 'tab1',
+                }, {
+                    name: 'tab2',
+                }];
+        var allItem = [{
+                    name: 'buy eggs',
+                    inTab: 'tab1',
+                    complete: false,
+                    move: false
+                }, {
+                    name: 'buy milk',
+                    inTab: 'tab1',
+                    complete: true,
+                    move: false
+                },  {
+                    name: 'collect underpants',
+                    inTab: 'tab2',
+                    complete: false,
+                    move: false
+                }, {
+                    name: '...',
+                    inTab: 'tab2',
+                    complete: false,
+                    move: false
+                }, {
+                    name: 'profit',
+                    inTab: 'tab2',
+                    complete: false,
+                    move: false
+                }
     ];
-    var arrayTab = [{
-                name: 'tab1',
-            }, {
-                name: 'tab2',
-            }];
-    var allItem = [{
-                name: 'buy eggs',
-                inTab: 'tab1',
-                complete: false,
-                move: false
-            }, {
-                name: 'buy milk',
-                inTab: 'tab1',
-                complete: true,
-                move: false
-            },  {
-                name: 'collect underpants',
-                inTab: 'tab2',
-                complete: false,
-                move: false
-            }, {
-                name: '...',
-                inTab: 'tab2',
-                complete: false,
-                move: false
-            }, {
-                name: 'profit',
-                inTab: 'tab2',
-                complete: false,
-                move: false
-        }];
     return {
         query: function () {
             return allItem;

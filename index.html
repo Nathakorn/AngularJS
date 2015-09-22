@@ -9,12 +9,11 @@
   
 </head>
 <body>
-  
-<div ng-app="todo" ng-controller="page"> 
- <span ng-repeat="item in tabList">
+  <div ng-app="todo" ng-controller="page"> 
+  <span ng-repeat="item in tabList">
     <a href="" ng-click="ui.current($index + 1);">{{item.name}}</a>
- </span>
- <div>
+  </span>
+  <div>
   <p>Add new tab<input type="text" ng-model = "newTab"/></p>
   <button name="button" ng-click="addTab()">Add tab</button>
  </div>   
@@ -27,10 +26,16 @@
               <li ng-class="{ 'done': item.complete }">
                 <button name="button" ng-click="DoComplete(item)">done</button>{{item.name}} 
               </li>
-               <span> move<input type="checkbox" ng-click="doMove(item)"/></span>
+               <button ng-click="doMove(item)">Move this!</button>
           </ul>
           <button name="button" ng-click="clearItem(tab.name)">Clear all</button>
           <button name="button" ng-click="clearComplete(tab.name)">Clear complete</button>
+          <div><p>Move this</p>
+             <ul ng-repeat="item in list" ng-show = "item.inTab == tab.name;item.move == true">
+              <li ng-class="{ 'done': item.complete }">
+                {{item.name}} 
+              </li>
+             </ul>
           <p>Move to<input type="text" ng-model = "destinationTab"/></p>
           <button name="button" ng-click="moveItem(tab.name,destinationTab)">Move!</button>
       </div>
@@ -38,3 +43,4 @@
   </div>
 </body>
 </html>
+
